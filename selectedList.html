@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Control form's elements</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+</head>
+<body>
+<div id="app" class="container">
+
+       
+            <div class="row">
+    
+                <div class="form-group col-md-4">
+                    <label>Comma separated values</label>
+                    <input 
+                        @keyup='handleCommaSeparated'
+                        v-model="commaSeparated" 
+                        class="form-control" type="text">    
+                </div>
+
+                <div class="form-group  col-md-4">
+                    <label>Multi lines values</label>
+                    <textarea  
+                    @keyup="handleMultipleItems"
+                    v-model="multipleItems"
+                    :rows="options.length"
+                    class="form-control"></textarea>    
+                </div>
+
+                <div class="form-group  col-md-4">
+                    <label>Multi select change</label>
+                    <select v-model="selectedItems"
+                        @change="handleMultiSelect" 
+                        :size="options.length" class="custom-select"  multiple>
+                      <option v-for="opt in options" :value="opt">
+                          {{opt}}
+                      </option>
+                    </select>  
+                </div>
+            </div>
+
+            <div v-for="opt in options">
+                <input 
+                @change="handleCheckboxesItems" 
+                v-model="checkboxesItems" 
+                 :value="opt" type="checkbox" :id="opt" />
+                <label :for="opt">{{opt}}</label>
+            </div>    
+       
+</div>
+ 
+
+
+<script src="js/vue.js"></script>   
+<script>
+
+const vm = new Vue({
+    el: '#app',
+    data: {
+        options: [
+            "apple", "orange", "grape", "cherry", "peach", "pear"
+        ],
+        commaSeparated: '',
+        multipleItems: '',
+        selectedItems: [],
+        checkboxesItems: []
+    },
+    methods: {
+        handleCommaSeparated(){
+            const allVals = this.commaSeparated.split(',')
+                      .map(el => el.trim())
+                      .filter(el => this.options.includes(el.toLowerCase())); 
+            this.multipleItems = allVals.join('\n');
+            this.selectedItems = allVals; 
+            this.checkboxesItems = allVals;           
+        },
+        handleMultipleItems(){
+            const allVals = this.multipleItems.split('\n')
+                      .map(el => el.trim())
+                      .filter(el => this.options.includes(el.toLowerCase())); 
+            this.commaSeparated = allVals.join(', ');
+            this.selectedItems = allVals;
+            this.checkboxesItems = allVals;
+        },
+        handleMultiSelect(){
+            this.commaSeparated = this.selectedItems.join(', ');
+            this.multipleItems = this.selectedItems.join(', ');
+            this.checkboxesItems = this.selectedItems;
+        },
+        handleCheckboxesItems(){
+            this.commaSeparated = this.checkboxesItems.join(', ');
+            this.multipleItems = this.checkboxesItems.join('\n');
+            this.selectedItems = this.checkboxesItems;
+        }
+    }
+
+})
+
+
+</script>
+
+</body>
+</html>
